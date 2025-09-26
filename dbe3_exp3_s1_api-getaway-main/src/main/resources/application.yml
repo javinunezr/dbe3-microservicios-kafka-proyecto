@@ -1,0 +1,32 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: backend-transactions
+          uri: lb://backend-service
+          predicates:
+            - Path=/api/transactions
+          filters:
+            - SetPath=/backend/api/transaction
+        - id: backend-accounts
+          uri: lb://backend-service
+          predicates:
+            - Path=/api/accounts
+          filters:
+            - SetPath=/backend/api/annual-account
+        - id: backend-interests
+          uri: lb://backend-service
+          predicates:
+            - Path=/api/interests
+          filters:
+            - SetPath=/backend/api/interest
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+logging:
+  level:
+    '[org.springframework.cloud.gateway]': DEBUG
+    '[reactor.netty]': INFO

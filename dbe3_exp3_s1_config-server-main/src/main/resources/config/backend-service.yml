@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: "jdbc:oracle:thin:@dbe3db_medium?TNS_ADMIN=/Users/javier/Documents/DESARROLLO_DE_APLICACIONES/DESARROLLOBACKENDIII/SEMANA6/dbe3_exp3_s1_backend-main/Wallet_dbe3db"
+    username: USUARIO
+    password: $cl4v3S3gur4$de12bits
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+logging:
+  level:
+    com.bancoxyz.backend: DEBUG
+    org.hibernate.SQL: DEBUG
