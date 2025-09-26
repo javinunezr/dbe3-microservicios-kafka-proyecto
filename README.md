@@ -12,6 +12,7 @@ Este proyecto implementa una arquitectura de microservicios completa usando Spri
 
 ## 🏗️ Arquitectura
 
+### Diagrama de Microservicios
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Config Server │    │  Eureka Server  │    │   API Gateway   │
@@ -24,6 +25,51 @@ Este proyecto implementa una arquitectura de microservicios completa usando Spri
 │     Port 8081   │    │     Port 8080   │    │  Ports 29092,   │
 │                 │    │                 │    │        39092    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+### Diagrama de Flujo de Eventos/Mensajes Kafka
+```
+    [Cliente/API]
+          │
+          │ HTTP POST /api/send
+          ▼
+┌─────────────────────┐
+│  Kafka Producer     │
+│  (Puerto 8080)      │
+│                     │
+│ ProducerController  │
+│ KafkaProducerService│
+└─────────────────────┘
+          │
+          │ Publica mensaje
+          ▼
+┌─────────────────────┐
+│   Apache Kafka      │
+│                     │
+│ Topic:              │
+│ "ejemplo-backend3"  │
+│                     │
+│ Brokers:            │
+│ - localhost:29092   │
+│ - localhost:39092   │
+└─────────────────────┘
+          │
+          │ Mensaje almacenado
+          ▼
+┌─────────────────────┐
+│   Kafka UI          │
+│  (Puerto 8090)      │
+│                     │
+│ - Visualización     │
+│ - Monitoreo         │
+│ - Gestión Topics    │
+└─────────────────────┘
+
+Tipos de Eventos/Mensajes:
+├── Mensajes de texto simple
+├── Eventos de notificación
+├── Logs de aplicación
+└── Mensajes de prueba/testing
 ```
 
 ## 🛠️ Tecnologías Utilizadas
