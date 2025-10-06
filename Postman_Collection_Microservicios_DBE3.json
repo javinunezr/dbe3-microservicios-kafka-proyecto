@@ -1,0 +1,380 @@
+{
+  "info": {
+    "name": "Microservicios DBE3 - Semana 8",
+    "description": "Colección completa de endpoints para el proyecto de microservicios con Spring Cloud, Resilience4j y Kafka",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🚪 API Gateway",
+      "item": [
+        {
+          "name": "1. Obtener Transacciones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/transactions",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "transactions"]
+            },
+            "description": "Obtiene la lista de todas las transacciones a través del API Gateway con Circuit Breaker"
+          }
+        },
+        {
+          "name": "2. Obtener Cuentas Anuales",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/accounts",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "accounts"]
+            },
+            "description": "Obtiene la lista de cuentas anuales a través del API Gateway"
+          }
+        },
+        {
+          "name": "3. Obtener Intereses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/interests",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "interests"]
+            },
+            "description": "Obtiene la lista de intereses a través del API Gateway"
+          }
+        },
+        {
+          "name": "4. Health Check Gateway",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/actuator/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["actuator", "health"]
+            },
+            "description": "Verifica el estado de salud del API Gateway y sus componentes"
+          }
+        },
+        {
+          "name": "5. Estado Circuit Breakers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/actuator/circuitbreakers",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["actuator", "circuitbreakers"]
+            },
+            "description": "Obtiene el estado actual de todos los Circuit Breakers (CLOSED, OPEN, HALF_OPEN)"
+          }
+        },
+        {
+          "name": "6. Eventos Circuit Breaker",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/actuator/circuitbreakerevents",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["actuator", "circuitbreakerevents"]
+            },
+            "description": "Historial de eventos del Circuit Breaker (errores, transiciones de estado)"
+          }
+        },
+        {
+          "name": "7. Info Gateway",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/actuator/info",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["actuator", "info"]
+            },
+            "description": "Información general de la aplicación Gateway"
+          }
+        }
+      ]
+    },
+    {
+      "name": "💼 Backend Service (Directo)",
+      "item": [
+        {
+          "name": "8. Transacciones (Directo)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8181/backend/api/transaction",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8181",
+              "path": ["backend", "api", "transaction"]
+            },
+            "description": "Acceso directo al backend sin pasar por el Gateway (sin Circuit Breaker)"
+          }
+        },
+        {
+          "name": "9. Cuentas Anuales (Directo)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8181/backend/api/annual-account",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8181",
+              "path": ["backend", "api", "annual-account"]
+            },
+            "description": "Acceso directo a las cuentas anuales"
+          }
+        },
+        {
+          "name": "10. Intereses (Directo)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8181/backend/api/interest",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8181",
+              "path": ["backend", "api", "interest"]
+            },
+            "description": "Acceso directo a los intereses"
+          }
+        }
+      ]
+    },
+    {
+      "name": "📨 Kafka Producer",
+      "item": [
+        {
+          "name": "11. Enviar Mensaje a Kafka",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "message",
+                  "value": "Hola desde Postman!",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/send",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "send"]
+            },
+            "description": "Envía un mensaje al topic 'ejemplo-backend3' en Kafka. Modificar el value del body para enviar diferentes mensajes."
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔍 Eureka Server",
+      "item": [
+        {
+          "name": "12. Dashboard Eureka (HTML)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8761",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8761"
+            },
+            "description": "Página principal del Eureka Dashboard (HTML). Mejor abrirlo en navegador."
+          }
+        },
+        {
+          "name": "13. Aplicaciones Registradas (JSON)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8761/eureka/apps",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8761",
+              "path": ["eureka", "apps"]
+            },
+            "description": "Lista de todas las aplicaciones registradas en Eureka en formato JSON"
+          }
+        },
+        {
+          "name": "14. Info Backend Service",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8761/eureka/apps/BACKEND-SERVICE",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8761",
+              "path": ["eureka", "apps", "BACKEND-SERVICE"]
+            },
+            "description": "Información específica del Backend Service registrado en Eureka"
+          }
+        },
+        {
+          "name": "15. Info API Gateway",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8761/eureka/apps/API-GATEWAY",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8761",
+              "path": ["eureka", "apps", "API-GATEWAY"]
+            },
+            "description": "Información específica del API Gateway registrado en Eureka"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔧 Config Server",
+      "item": [
+        {
+          "name": "16. Health Check Config Server",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8888/actuator/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8888",
+              "path": ["actuator", "health"]
+            },
+            "description": "Verifica el estado de salud del Config Server"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🎭 Fallback Endpoints",
+      "item": [
+        {
+          "name": "17. Fallback Transacciones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/fallback/transactions",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["fallback", "transactions"]
+            },
+            "description": "Endpoint de fallback para transacciones. Se activa automáticamente cuando el backend no responde."
+          }
+        },
+        {
+          "name": "18. Fallback Cuentas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/fallback/accounts",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["fallback", "accounts"]
+            },
+            "description": "Endpoint de fallback para cuentas anuales"
+          }
+        },
+        {
+          "name": "19. Fallback Intereses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/fallback/interests",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["fallback", "interests"]
+            },
+            "description": "Endpoint de fallback para intereses"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "gateway_url",
+      "value": "http://localhost:8082",
+      "type": "string"
+    },
+    {
+      "key": "backend_url",
+      "value": "http://localhost:8181",
+      "type": "string"
+    },
+    {
+      "key": "kafka_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "eureka_url",
+      "value": "http://localhost:8761",
+      "type": "string"
+    },
+    {
+      "key": "config_url",
+      "value": "http://localhost:8888",
+      "type": "string"
+    }
+  ]
+}

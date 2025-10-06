@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  config-server:
+    build: ./dbe3_exp3_s1_config-server-main
+    ports:
+      - "8888:8888"
+    environment:
+      - SPRING_PROFILES_ACTIVE=native
+    volumes:
+      - ./dbe3_exp3_s1_config-server-main/src/main/resources/config:/app/config
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/localhost/8888' || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+
+  eureka-server:
+    build: ./dbe3_exp3_s1_eureka-server-main
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    depends_on:
+      - config-server
+
+  api-getaway:
+    build: ./dbe3_exp3_s1_api-getaway-main
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    depends_on:
+      - config-server
+      - eureka-server
+
+  backend-service:
+    build: ./dbe3_exp3_s1_backend-main
+    ports:
+      - "8181:8181"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+    volumes:
+      - ./dbe3_exp3_s1_backend-main/Wallet_dbe3db:/app/Wallet_dbe3db
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started

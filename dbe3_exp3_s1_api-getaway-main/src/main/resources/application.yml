@@ -1,6 +1,8 @@
 spring:
   cloud:
     gateway:
+      httpclient:
+        response-timeout: 10s
       routes:
         - id: backend-transactions
           uri: lb://backend-service
@@ -8,25 +10,77 @@ spring:
             - Path=/api/transactions
           filters:
             - SetPath=/backend/api/transaction
+            - name: CircuitBreaker
+              args:
+                name: backend-circuit-breaker
+                fallbackUri: forward:/fallback/transactions
         - id: backend-accounts
           uri: lb://backend-service
           predicates:
             - Path=/api/accounts
           filters:
             - SetPath=/backend/api/annual-account
+            - name: CircuitBreaker
+              args:
+                name: backend-circuit-breaker
+                fallbackUri: forward:/fallback/accounts
         - id: backend-interests
           uri: lb://backend-service
           predicates:
             - Path=/api/interests
           filters:
             - SetPath=/backend/api/interest
+            - name: CircuitBreaker
+              args:
+                name: backend-circuit-breaker
+                fallbackUri: forward:/fallback/interests
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
+
+# Configuración de Resilience4j
+resilience4j:
+  circuitbreaker:
+    instances:
+      backend-circuit-breaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+  retry:
+    instances:
+      backend-retry:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - java.util.concurrent.TimeoutException
+  timelimiter:
+    instances:
+      backend-timelimiter:
+        timeoutDuration: 10s
+        cancelRunningFuture: true
+
+# Management endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,circuitbreakers,circuitbreakerevents
+  endpoint:
+    health:
+      show-details: always
 
 logging:
   level:
     '[org.springframework.cloud.gateway]': DEBUG
     '[reactor.netty]': INFO
+    '[io.github.resilience4j]': DEBUG

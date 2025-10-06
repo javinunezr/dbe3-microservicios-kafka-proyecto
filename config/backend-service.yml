@@ -1,7 +1,9 @@
 spring:
+  application:
+    name: backend-service
   datasource:
     driver-class-name: oracle.jdbc.driver.OracleDriver
-    url: "jdbc:oracle:thin:@dbe3db_medium?TNS_ADMIN=/app/Wallet_dbe3db"
+    url: "jdbc:oracle:thin:@dbe3db_medium?TNS_ADMIN=/Users/javier/Documents/DESARROLLO_DE_APLICACIONES/DESARROLLOBACKENDIII/SEMANA6/dbe3_exp3_s1_backend-main/Wallet_dbe3db"
     username: USUARIO
     password: $cl4v3S3gur4$de12bits
     hikari:
@@ -14,11 +16,14 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-
+server:
+  port: 8181
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-server:8761/eureka
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
 logging:
   level:
