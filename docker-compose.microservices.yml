@@ -7,7 +7,9 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=default
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka-1:9092,kafka-2:9092
+    external_links:
+      - dbe3-microservicios-kafka-proyecto-kafka-1-1:kafka-1
+      - dbe3-microservicios-kafka-proyecto-kafka-2-1:kafka-2
 
   kafka-consumer:
     build:
@@ -17,9 +19,6 @@ services:
       - "8081:8081"
     environment:
       - SPRING_PROFILES_ACTIVE=default
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka-1:9092,kafka-2:9092
-
-networks:
-  default:
-    external: true
-    name: dbe3_exp3_s1_backend-main_default
+    external_links:
+      - dbe3-microservicios-kafka-proyecto-kafka-1-1:kafka-1
+      - dbe3-microservicios-kafka-proyecto-kafka-2-1:kafka-2
