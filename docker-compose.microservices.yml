@@ -1,50 +1,128 @@
-version: '3.8'
 services:
   config-server:
-    build: ./dbe3_exp3_s1_config-server-main
+    build:
+      context: ./dbe3_exp3_s1_config-server-main
+      dockerfile: Dockerfile
     ports:
       - "8888:8888"
     environment:
       - SPRING_PROFILES_ACTIVE=native
-    volumes:
-      - ./dbe3_exp3_s1_config-server-main/src/main/resources/config:/app/config
     healthcheck:
-      test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/localhost/8888' || exit 1"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - microservices-network
 
   eureka-server:
-    build: ./dbe3_exp3_s1_eureka-server-main
+    build:
+      context: ./dbe3_exp3_s1_eureka-server-main
+      dockerfile: Dockerfile
     ports:
       - "8761:8761"
-    environment:
-      - SPRING_PROFILES_ACTIVE=default
-    depends_on:
-      - config-server
-
-  api-getaway:
-    build: ./dbe3_exp3_s1_api-getaway-main
-    ports:
-      - "8082:8082"
-    environment:
-      - SPRING_PROFILES_ACTIVE=default
-    depends_on:
-      - config-server
-      - eureka-server
-
-  backend-service:
-    build: ./dbe3_exp3_s1_backend-main
-    ports:
-      - "8181:8181"
-    environment:
-      - SPRING_PROFILES_ACTIVE=default
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
-    volumes:
-      - ./dbe3_exp3_s1_backend-main/Wallet_dbe3db:/app/Wallet_dbe3db
     depends_on:
       config-server:
         condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - CONFIG_SERVER_URL=http://config-server:8888
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - microservices-network
+
+  api-gateway:
+    build:
+      context: ./dbe3_exp3_s1_api-getaway-main
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
       eureka-server:
-        condition: service_started
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - microservices-network
+
+  backend-service:
+    build:
+      context: ./dbe3_exp3_s1_backend-main
+      dockerfile: Dockerfile
+    ports:
+      - "8181:8181"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - CONFIG_SERVER_URL=http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+    volumes:
+      - ./dbe3_exp3_s1_backend-main/Wallet_dbe3db:/app/Wallet_dbe3db:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8181/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - microservices-network
+
+  kafka-producer:
+    build:
+      context: ./kafka-producer-main/kafka-producer
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka-1:9092,kafka-2:9092
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - microservices-network
+      - kafka-network
+
+  kafka-consumer:
+    build:
+      context: ./kafka-consumer-main/kafka-consumer
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka-1:9092,kafka-2:9092
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - microservices-network
+      - kafka-network
+
+networks:
+  microservices-network:
+    driver: bridge
+  kafka-network:
+    external: true
+    name: dbe3_exp3_s1_backend-main_default
