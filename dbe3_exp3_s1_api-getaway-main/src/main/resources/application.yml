@@ -30,3 +30,22 @@ logging:
   level:
     '[org.springframework.cloud.gateway]': DEBUG
     '[reactor.netty]': INFO
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10000
+        permitted-number-of-calls-in-half-open-state: 3
+    instances:
+      backend-circuit-breaker:
+        base-config: default
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 10s
+    instances:
+      backend-circuit-breaker:
+        base-config: default
