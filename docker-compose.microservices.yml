@@ -48,12 +48,6 @@ services:
     volumes:
       - ./dbe3_exp3_s1_backend-main/Wallet_dbe3db:/app/Wallet_dbe3db:ro
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8181/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
 
   kafka-producer:
     build:
