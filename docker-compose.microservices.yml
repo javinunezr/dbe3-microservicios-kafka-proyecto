@@ -40,10 +40,8 @@ services:
       - "8181:8181"
     depends_on:
       - eureka-server
-      - config-server
     environment:
       - SPRING_PROFILES_ACTIVE=default
-      - CONFIG_SERVER_URL=http://config-server:8888
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
     volumes:
       - ./dbe3_exp3_s1_backend-main/Wallet_dbe3db:/app/Wallet_dbe3db:ro
